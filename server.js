@@ -13,10 +13,7 @@ require("dotenv").config();
 const dbURI = process.env.MONGO_URI || require("./config/keys").mongoURI;
 
 mongoose
-	.connect(dbURI, {
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
-	})
+	.connect(dbURI)
 	.then(() => console.log("MongoDB Connected"))
 	.catch((err) => console.log(err));
 
