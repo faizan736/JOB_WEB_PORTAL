@@ -4,29 +4,23 @@ const mongoose = require("mongoose");
 const passportConfig = require("./lib/passportConfig");
 const nodemailer = require("nodemailer");
 const { v4: uuidv4 } = require("uuid");
-var cors = require("cors");
+const cors = require("cors");
 const fs = require("fs");
 
 require("dotenv").config();
-// // MongoDsB
-// mongoose
-//   .connect("mongodb://localhost:27017/jobPortal", {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//     useCreateIndex: true,
-//     useFindAndModify: false,
-//   })
-//   .then((res) => console.log("Connected to DB.."))
-//   .catch((err) => console.log(err));
 
-const db = require("./config/keys").mongoURI;
-// mongoose.set("strictQuery", false);
+// MongoDB Connection
+const dbURI = process.env.MONGO_URI || require("./config/keys").mongoURI;
+
 mongoose
-	.connect(process.env.MONGO_URI)
+	.connect(dbURI, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	})
 	.then(() => console.log("MongoDB Connected"))
 	.catch((err) => console.log(err));
 
-// initialising directories
+// Initialising directories
 if (!fs.existsSync("./public")) {
 	fs.mkdirSync("./public");
 }
@@ -38,7 +32,7 @@ if (!fs.existsSync("./public/profile")) {
 }
 
 const app = express();
-const port = process.env.PORT;
+const PORT = process.env.PORT || 10000;
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -54,6 +48,6 @@ app.use("/api", require("./routes/apiRoutes"));
 app.use("/upload", require("./routes/uploadRoutes"));
 app.use("/host", require("./routes/downloadRoutes"));
 
-app.listen(port, () => {
-	console.log(`Server started on port ${port}!`);
+app.listen(PORT, "0.0.0.0", () => {
+	console.log(`Server started on http://0.0.0.0:${PORT}!`);
 });
